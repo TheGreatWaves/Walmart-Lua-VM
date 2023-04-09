@@ -5,4 +5,4 @@ set(SOURCE_FILES main.cpp)
 add_executable(WalmartLua ${SOURCE_FILES})
 target_include_directories(WalmartLua
   PRIVATE
-    header/)
+    include/)

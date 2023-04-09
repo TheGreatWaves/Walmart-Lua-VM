@@ -10,5 +10,4 @@ The vast majority of virtual machines used in programming languages are stack-ba
 In a register-based virtual machine, data is stored in registers rather than on a stack. This can reduce the number of memory operations required and lead to better performance. Additionally, register-based virtual machines provide more control over register allocation, which can lead to more efficient use of resources. The bytecode instructions used in a register-based virtual machine also tend to be simpler, which can make it easier to write and optimize a compiler for the virtual machine.
 
 # References
-[1] Ierusalimschy, R., et al. "The Implementation of Lua 5.0." Journal of Universal Computer Science, vol. 11, no. 7, 2005, pp. 1159-1176.
-
+[1] Ierusalimschy, R., et al. "The Implementation of Lua 5.0." Journal of Universal Computer Science, vol. 11, no. 7, 2005, pp. 1159-1176. [Online]. Available: https://www.lua.org/doc/jucs05.pdf
