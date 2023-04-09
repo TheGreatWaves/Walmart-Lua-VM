@@ -1,8 +1,8 @@
 # Walmart Lua VM
-Wallmart-Lua-VM is a personal hobby project exploring the realm of register-based virtual machines. Inspired by Lua's VM implementation, the project aims to implement a register-based virtual machine that follows Lua's design principles.
+Walmart-Lua-VM is a personal hobby project exploring the realm of register-based virtual machines. Inspired by Lua's VM implementation, the project aims to implement a basic register-based virtual machine that follows Lua's design principles.
 
 # Brief 
-A virtual machine (VM) is a software layer that allows programs to be executed in a platform-independent way. Programs are written in a low-level language called bytecode, which is similar to machine code. The VM executes the bytecode instructions, making it possible for the programs to run consistently and predictably across different hardware and operating systems. One benefit of using a virtual machine is that it allows for cross-compilation and the development of custom instruction sets tailored to your specific needs.
+A virtual machine (VM) is a software layer that allows programs to be executed in a platform-independent way. Programs are written in a low-level language called bytecode, which is similar to machine code. The VM executes the bytecode instructions, making it possible for the programs to run consistently and predictably across different hardware and operating systems.
 
 # Motivation
 The vast majority of virtual machines used in programming languages are stack-based, including popular examples like the JVM, .NET CLR, and Python. However, this architecture has some limitations, such as difficulties in register allocation, increased memory usage due to the use of a stack, and slower performance for certain operations. The register-based virtual machine was developed to address these concerns.
