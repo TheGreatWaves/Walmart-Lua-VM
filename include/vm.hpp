@@ -3,15 +3,20 @@
 #define WALMART_LUA_VM
 
 #include <vector>
+#include "decode.hpp"
+
 
 /* Maximum size of the stack */
-constexpr uint MAX_STACK_SIZE{1000};
+constexpr size_t MAX_STACK_SIZE{1000};
 
 /* Maximum number of registers */
 constexpr uint8_t MAX_REGISTERS{255};
 
 /* Max number of instructions */
-constexpr uint MAX_INSTRUCTIONS{10000};
+constexpr size_t MAX_INSTRUCTIONS{10000};
+
+/* Max number of constants */
+constexpr uint8_t MAX_CONSTANTS{255};
 
 /*
  * An instruction is 32 bits long.
@@ -23,6 +28,15 @@ struct Instruction
   uint8_t b;
   uint8_t c;
 };
+
+[[nodiscard]] auto encode_instruction(const Instruction& instruction) -> uint32_t {
+  uint32_t encoded = 0;
+  encoded |= static_cast<uint32_t>(instruction.opcode) << 26;
+  encoded |= static_cast<uint32_t>(instruction.a) << 18;
+  encoded |= static_cast<uint32_t>(instruction.b) << 9;
+  encoded |= static_cast<uint32_t>(instruction.c);
+  return encoded;
+}
 
 struct RegisterFile 
 {
@@ -102,6 +116,8 @@ struct VM
   uint8_t instructionPointer;
   uint8_t stackPointer;
 
+  int constants[MAX_CONSTANTS];
+
   VM(Instruction *instructions)
       : instructions(instructions), instructionPointer(0), stackPointer(0) {}
 
@@ -123,8 +139,9 @@ struct VM
     {
       // Fetch instruction
       auto &instruction = instructions[instructionPointer];
-      auto opcode = decode(instruction.opcode);
-      auto [_, a, b, c] = instruction;
+      auto instr = encode_instruction(instruction);
+      auto opcode = decode_op(instr);
+      auto [a, b, c] = decode_ABC(instr);
 
       // Move to next instruction
       instructionPointer++;
@@ -145,6 +162,9 @@ struct VM
         break;
       case OpCode::OP_SUB:
         opcode_idx = 3;
+        break;
+        default:
+          throw std::runtime_error("Unknown Opcode");
       }
 
       // Jump to the opcode handler

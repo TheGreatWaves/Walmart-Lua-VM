@@ -35,29 +35,24 @@ enum class OpCode : uint8_t { OPCODE(ENUM) OP_COUNT };
 
 // define a macro to convert an opcode to a string
 #define STR_HELPER(X) std::string_view(#X)
-#define OPCODE_STR(opcode) case OpCode::opcode: return STR_HELPER(opcode);
+#define OPCODE_STR(opcode)                                                     \
+  case OpCode::opcode:                                                         \
+    return STR_HELPER(opcode);
 
-[[nodiscard]] inline auto nameof(OpCode opcode) -> std::string_view 
-{
-  switch (opcode) 
-  {
+[[nodiscard]] inline auto nameof(OpCode opcode) -> std::string_view {
+  switch (opcode) {
     OPCODE(OPCODE_STR)
-    default: throw std::invalid_argument("Unexpected Opcode");
+  default:
+    throw std::invalid_argument("Unexpected Opcode");
   }
 }
 
 #undef OPCODE_STR
 #undef STR_HELPER
 
-inline std::ostream &operator<<(std::ostream &os, OpCode opcode) 
-{
+inline std::ostream &operator<<(std::ostream &os, OpCode opcode) {
   os << nameof(opcode);
   return os;
-}
-
-[[nodiscard]] auto decode(uint8_t opcode) -> OpCode 
-{
-  return static_cast<OpCode>(opcode);
 }
 
 #endif /* WALMART_LUA_OPCODES */
