@@ -1,6 +1,5 @@
 #include "opcodes.hpp"
 #include "vm.hpp"
-#include "decode.hpp"
 #include <iostream>
 
 int main() 

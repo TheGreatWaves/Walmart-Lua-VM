@@ -126,10 +126,7 @@ struct VM
     #define LABEL(opcode) &&opcode,
     static const void *jumpTable[] = 
     {
-        &&OP_ADD,
-        &&OP_MUL,
-        &&OP_HALT,
-        &&OP_SUB,
+      OPCODE(LABEL)
     };
     #undef LABEL
 
@@ -146,49 +143,39 @@ struct VM
       // Move to next instruction
       instructionPointer++;
 
-      // TODO: REMOVE THIS
-      auto opcode_idx = 0;
+      // Jump to the opcode handler
+      goto *jumpTable[static_cast<int>(opcode)];
 
-      switch (opcode) {
-        break;
-      case OpCode::OP_ADD:
-        opcode_idx = 0;
-        break;
-      case OpCode::OP_MUL:
-        opcode_idx = 1;
-        break;
-      case OpCode::OP_HALT:
-        opcode_idx = 2;
-        break;
-      case OpCode::OP_SUB:
-        opcode_idx = 3;
-        break;
-        default:
-          throw std::runtime_error("Unknown Opcode");
+      OP_ADD : 
+      {
+        r[a] = r[b] + r[c];
+        continue;
       }
 
-      // Jump to the opcode handler
-      goto *jumpTable[opcode_idx];
+      OP_MUL : 
+      {
+        r[a] = r[b] * r[c];
+        continue;
+      }
 
-    OP_ADD : 
-    {
-      r[a] = r[b] + r[c];
-      continue;
-    }
+      OP_SUB : 
+      {
+        r[a] = r[b] - r[c];
+        continue;
+      }
 
-    OP_MUL : 
-    {
-      r[a] = r[b] * r[c];
-      continue;
-    }
+      OP_DIV: 
+      {
+        r[a] = r[b] / r[c];
+        continue;
+      }
 
-    OP_SUB : 
-    {
-      r[a] = r[b] - r[c];
-      continue;
-    }
+      OP_HALT : { break; }
 
-    OP_HALT : { break; }
+      OP_LOADK: { continue; }
+      OP_GETGLOBAL: { continue; }
+      OP_SETGLOBAL: { continue; }
+
     }
   }
 };
