@@ -5,6 +5,17 @@
 #include <vector>
 #include "decode.hpp"
 
+#define THREADED_CODE
+
+#ifdef THREADED_CODE
+  #define DISPATCH(opcode) goto *jumpTable[ opcode ];
+  #define INSTR(opcode) lbl_##opcode
+  #define NEXT continue
+#else
+  #define DISPATCH(opcode) switch( opcode )
+  #define INSTR(opcode) case static_cast<int>( OpCode::opcode )
+  #define NEXT break
+#endif 
 
 /* Maximum size of the stack */
 constexpr size_t MAX_STACK_SIZE{1000};
@@ -123,12 +134,14 @@ struct VM
 
   void execute() 
   {
-    #define LABEL(opcode) &&opcode,
+    #ifdef THREADED_CODE
+    #define LABEL(opcode) &&lbl_##opcode,
     static const void *jumpTable[] = 
     {
       OPCODE(LABEL)
     };
     #undef LABEL
+    #endif
 
     auto &r = registerFile.registers;
 
@@ -143,39 +156,40 @@ struct VM
       // Move to next instruction
       instructionPointer++;
 
-      // Jump to the opcode handler
-      goto *jumpTable[static_cast<int>(opcode)];
 
-      OP_ADD : 
+      DISPATCH(static_cast<int>(opcode))
       {
-        r[a] = r[b] + r[c];
-        continue;
+
+        INSTR(OP_ADD): 
+        {
+          r[a] = r[b] + r[c];
+          NEXT;
+        }
+
+        INSTR(OP_MUL): 
+        {
+          r[a] = r[b] * r[c];
+          NEXT;
+        }
+
+        INSTR(OP_SUB): 
+        {
+          r[a] = r[b] - r[c];
+          NEXT;
+        }
+
+        INSTR(OP_DIV): 
+        {
+          r[a] = r[b] / r[c];
+          NEXT;
+        }
+
+        INSTR(OP_HALT): { return; }
+        INSTR(OP_LOADK): { NEXT; }
+        INSTR(OP_GETGLOBAL): { NEXT; }
+        INSTR(OP_SETGLOBAL): { NEXT; }
+
       }
-
-      OP_MUL : 
-      {
-        r[a] = r[b] * r[c];
-        continue;
-      }
-
-      OP_SUB : 
-      {
-        r[a] = r[b] - r[c];
-        continue;
-      }
-
-      OP_DIV: 
-      {
-        r[a] = r[b] / r[c];
-        continue;
-      }
-
-      OP_HALT : { break; }
-
-      OP_LOADK: { continue; }
-      OP_GETGLOBAL: { continue; }
-      OP_SETGLOBAL: { continue; }
-
     }
   }
 };
