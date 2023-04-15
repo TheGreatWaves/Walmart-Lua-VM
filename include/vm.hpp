@@ -3,6 +3,7 @@
 #define WALMART_LUA_VM
 
 #include <vector>
+#include "instruction.hpp"
 #include "decode.hpp"
 
 #define THREADED_CODE
@@ -29,25 +30,6 @@ constexpr size_t MAX_INSTRUCTIONS{10000};
 /* Max number of constants */
 constexpr uint8_t MAX_CONSTANTS{255};
 
-/*
- * An instruction is 32 bits long.
- */
-struct Instruction 
-{
-  uint8_t opcode;
-  uint8_t a;
-  uint8_t b;
-  uint8_t c;
-};
-
-[[nodiscard]] auto encode_instruction(const Instruction& instruction) -> uint32_t {
-  uint32_t encoded = 0;
-  encoded |= static_cast<uint32_t>(instruction.opcode) << 26;
-  encoded |= static_cast<uint32_t>(instruction.a) << 18;
-  encoded |= static_cast<uint32_t>(instruction.b) << 9;
-  encoded |= static_cast<uint32_t>(instruction.c);
-  return encoded;
-}
 
 struct RegisterFile 
 {
@@ -155,7 +137,6 @@ struct VM
 
       // Move to next instruction
       instructionPointer++;
-
 
       DISPATCH(static_cast<int>(opcode))
       {

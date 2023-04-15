@@ -2,23 +2,7 @@
 #ifndef WALMART_LUA_DECODE
 #define WALMART_LUA_DECODE
 
-#include "opcodes.hpp"
-
-/*
- * Size and position of opcode arguments. (Straight from lua)
- */
-#define SIZE_C          9
-#define SIZE_B          9
-#define SIZE_Bx         (SIZE_C + SIZE_B)
-#define SIZE_A          8
-
-#define SIZE_OP         6
-
-#define POS_OP          0
-#define POS_A           (POS_OP + SIZE_OP)
-#define POS_C           (POS_A + SIZE_A)
-#define POS_B           (POS_C + SIZE_C)
-#define POS_Bx          POS_C
+#include "instruction.hpp"
 
 namespace walmart_lua
 {
@@ -29,23 +13,23 @@ namespace walmart_lua
 
   [[nodiscard]] auto decode_opcode(uint32_t instruction) -> uint8_t 
   {
-    return (instruction >> 26) & 0x3F; 
+    return (instruction >> POS_OP) & MASK1(SIZE_OP, 0);
   }
 
   [[nodiscard]] auto decode_A(uint32_t instruction) -> uint8_t
   {
 
-    return ((instruction >> 18) & 0xFF);
+    return ((instruction >> POS_A) & MASK1(SIZE_A, 0));
   }
   
   [[nodiscard]] auto decode_B(uint32_t instruction) -> uint8_t
   {
-    return (instruction >> 9) & 0x1FF;
+    return (instruction >> POS_B) & MASK1(SIZE_B, 0);
   }
 
   [[nodiscard]] auto decode_C(uint32_t instruction) -> uint8_t
   {
-    return (instruction & 0x1FF);
+    return (instruction >> POS_C) & MASK1(SIZE_C, 0);
   }
 }
 
