@@ -14,4 +14,10 @@ std::string toBinaryString(const T& x)
     return ss.str();
 }
 
+/*
+ * Casts
+ */
+
+[[ nodiscard ]] constexpr uint8_t to_u8(auto i) { return static_cast<uint8_t>(i); }
+
 #endif /* WALMART_LUA_UTILS */

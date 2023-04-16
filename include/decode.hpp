@@ -10,23 +10,28 @@
   x(OP) \
   x(A) \
   x(B) \
-  x(C) 
-
-namespace walmart_lua
-{
-  [[nodiscard]] auto get_op(uint8_t opcode) -> OpCode 
-  {
-    return static_cast<OpCode>(opcode);
-  }
-
-  #define MAKE_DECODE_FN(arg) [[nodiscard]] auto decode_##arg(uint32_t instruction) -> uint8_t { return GET(arg); }
-  ARGS(MAKE_DECODE_FN)
-  #undef MAKE_DECODE_FN
-}
+  x(C)
 
 struct Instr_ABC {uint8_t A; uint8_t B; uint8_t C; };
 
-#define decode_op(instr) walmart_lua::get_op(walmart_lua::decode_OP(instr))
-#define decode_ABC(instr) Instr_ABC { walmart_lua::decode_A(instr), walmart_lua::decode_B(instr), walmart_lua::decode_C(instr) }
+#define GET_OPCODE(i) (static_cast<OpCode>(((i)>>POS_OP) & MASK1(SIZE_OP, 0)))
+#define SET_OPCODE(i, o) ((i) = (((i) & MASK0(SIZE_OP, POS_OP)) | ((static_cast<uint32_t>(o) << POS_OP) & MASK1(SIZE_OP, POS_OP))))
+
+#define getarg(i, pos, size) (static_cast<int>(((i)>>(pos)) & MASK1(size, 0)))
+#define setarg(i, v, pos, size) ((i) = (((i) & MASK0(size, pos)) | ((static_cast<uint32_t>(v) << pos) & MASK1(size, pos))))
+
+#define GET_ARG_A(i)  to_u8(getarg(i, POS_A,SIZE_A ))
+#define SETARG_A(i,v)   setarg(i, v, POS_A,SIZE_A )
+
+#define GET_ARG_B(i)   to_u8(getarg(i, POS_B,SIZE_B ))
+#define SETARG_B(i,v)   setarg(i, v, POS_B,SIZE_B )
+
+#define GET_ARG_C(i)   to_u8(getarg(i, POS_C,POS_C ))
+#define SETARG_C(i,v)   setarg(i, v, POS_C,SIZE_C )
+
+#undef ARG_INFO
+
+#define decode_op(instr) GET_OPCODE(instr)
+#define decode_ABC(instr) Instr_ABC { GET_ARG_A(instr), GET_ARG_B(instr), GET_ARG_C(instr) }
 
 #endif /* WALMART_LUA_DECODE */

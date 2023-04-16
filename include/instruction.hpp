@@ -6,12 +6,12 @@
 // This file mostly mirrors lua's source, namely lopcodes.h
 
 /* Lua assume that instructions are unsigned numbers.
- * An opcode can be identified by the first 6 bits.
+ * An opcode can be identified by the first 7  bits (w.r.t rhs).
  * Instructions are as follows:
  *   'A'   : 8 bits
- *   'B'   : 9 bits
- *   'C'   : 9 bits
- *   'Bx'  : ('B' and 'C')
+ *   'B'   : 8 bits
+ *   'C'   : 8 bits
+ *   'Bx'  : ('B' and 'C' + 1)
  *   'sBx' : signed Bx
  */
 
@@ -47,6 +47,7 @@ enum class OpMode {iABC,iABx};
 // Creates a mask of 'n' 0s followed by p 1s (rhs)
 #define MASK0(n,p)   (~MASK1(n,p))
 
+// TODO: Remove me
 /*
  * An instruction is 32 bits long.
  * Standard ABC
